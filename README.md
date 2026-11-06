@@ -23,7 +23,7 @@ Just copy `pixelizer.js` into your project! I promise there'll be a better way t
 ### Boring
 
 ``` js
-import makePixelizer from "pixelizer";
+import makePixelizer from "./pixelizer.js";
 
 const pixelizer = makePixelizer();
 const output =
