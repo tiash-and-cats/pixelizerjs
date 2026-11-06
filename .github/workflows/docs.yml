@@ -18,14 +18,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # Vite build
+      - name: Checkout
+        uses: actions/checkout@v4
+        
       - name: Build Vite
         run: |
             cd docs
             npm install
             npm run build
 
-      # Upload combined site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
