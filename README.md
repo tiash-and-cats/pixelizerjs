@@ -123,7 +123,7 @@ composer.addPass(
 );
 ```
 
-### Low-Level Access
+### Low-level access
 
 > [!CAUTION]
 > YOU ARE ENTERING A VERY TECHNICAL AREA. IF YOU DO NOT UNDERSTAND, STAY CALM AND SCROLL PAST.
@@ -147,6 +147,6 @@ const {
 
 The shader is only part of the final look. Different palettes can dramatically change the atmosphere of a scene, ranging from subtle retro rendering to aggressive posterization.
 
-Please experiment with palettes, pixel sizes, and dithering settings to develop a UNIQUE visual identity!
+Please experiment with palettes, pixel sizes, and dithering settings to develop a unique visual identity.
 
-I do not want `pixelizer.js` to become known for a repetitive visual style, so PLEASE don't all use the same cookie-cutter config. The defaults are intended as a starting point.
+I do not want `pixelizer.js` to become known for a repetitive visual style, so please don't all use the same cookie-cutter config. The defaults are intended as a starting point.
