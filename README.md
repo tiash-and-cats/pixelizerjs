@@ -30,7 +30,7 @@ const output =
   pixelizer.pixelize(imageBitmap);
 ```
 
-> By default, `pixelizer.js` uses the Resurrect64 color palette by Kerrie Lake on Lospec, a 5x5 pixel square size, with dithering enabled. You can change this by using *options!*
+> By default, `pixelizer.js` uses the Resurrect64 color palette by Kerrie Lake on Lospec, a 5x5 pixel size, with dithering enabled. You can change this by using *options!*
 
 ### Custom options
 
