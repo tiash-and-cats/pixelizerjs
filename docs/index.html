@@ -38,16 +38,16 @@
         <hr>
         
         <p>
-          Dithering strength: <input type="range" min="0" max="100" value="15" @input="dither = $event.target.value / 100" /> <span x-text="Math.round(dither * 100) + '%'"></span>
+          Dithering strength: <span class="formel"><span x-text="Math.round(dither * 100) + '%'"></span> <input type="range" min="0" max="100" value="15" @input="dither = $event.target.value / 100" /></span>
         </p>
         
         <p>
-          Pixel size: <input type="range" min="1" max="20" value="5" @input="pxSize = $event.target.value" /> <span x-text="pxSize + 'x' + pxSize"></span>
+          Pixel size: <span class="formel"><span x-text="pxSize + 'x' + pxSize"></span> <input type="range" min="1" max="20" value="5" @input="pxSize = $event.target.value" /></span>
         </p>
         
         <form @submit.prevent="loadLospecPalette">
         <p>
-          Enter the name of a palette on Lospec to use: <input type="text" id="lospec-palette" /> <button type="submit">Load!</button>
+          Enter the name of a palette on Lospec to use: <span class="formel"><input type="text" id="lospec-palette" /> <button type="submit">Load!</button></span>
         </p>
         </form>
         
@@ -63,12 +63,13 @@
       <section>
         <h2>Wait, where's the docs?</h2>
         
-        <p>Ah, you're right. The docs aren't exactly GOOD yet, as they are pretty much just the <a href="https://github.com/tiash-and-cats/pixelizerjs/blob/master/README.md">README on GitHub.</a> That does have some useful information, though, so it's worth checking.</p>
+        <p>Ah, you're right. The docs aren't exactly GOOD yet, as they are pretty much just the <a href="https://github.com/tiash-and-cats/pixelizerjs/blob/master/README.md">README on GitHub</a>. That does have some useful information, though, so it's worth checking.</p>
       </section>
       
-      <blockquote>
+      <footer>
         <p>&copy; tiash-and-cats & contributors 2026+</p>
-      </blockquote>
+        <p><code>pixelizer.js</code> is licensed under the <a href="https://github.com/tiash-and-cats/pixelizerjs/blob/master/LICENSE">MIT License</a>.</p>
+      </footer>
     </main>    
     <script type="module" src="/main.js"></script>
   </body>
