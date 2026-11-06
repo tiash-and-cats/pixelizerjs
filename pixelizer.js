@@ -38,11 +38,38 @@ const FRAGMENT_SHADER_SRC = `
   uniform vec2 u_resolution;
   uniform float u_pixelSize;
   uniform float u_paletteSize;
+  uniform float u_ditherStrength;
 
   varying vec2 v_texCoord;
 
   float bayer4(vec2 p) {
-    /**** BAYER4_FUNCTION_IMPLEMENTATION */return 0.5;
+    p = mod(p, 4.0);
+
+    if (p.x < 1.0) {
+      if (p.y < 1.0) return 0.0  / 16.0;
+      if (p.y < 2.0) return 12.0 / 16.0;
+      if (p.y < 3.0) return 3.0  / 16.0;
+      return 15.0 / 16.0;
+    }
+
+    if (p.x < 2.0) {
+      if (p.y < 1.0) return 8.0  / 16.0;
+      if (p.y < 2.0) return 4.0  / 16.0;
+      if (p.y < 3.0) return 11.0 / 16.0;
+      return 7.0  / 16.0;
+    }
+
+    if (p.x < 3.0) {
+      if (p.y < 1.0) return 2.0  / 16.0;
+      if (p.y < 2.0) return 14.0 / 16.0;
+      if (p.y < 3.0) return 1.0  / 16.0;
+      return 13.0 / 16.0;
+    }
+
+    if (p.y < 1.0) return 10.0 / 16.0;
+    if (p.y < 2.0) return 6.0  / 16.0;
+    if (p.y < 3.0) return 9.0  / 16.0;
+    return 5.0  / 16.0;
   }
 
   void main() {
@@ -80,7 +107,7 @@ const FRAGMENT_SHADER_SRC = `
     float threshold = bayer4(blockIndex);
 
     // Strength can be adjusted
-    avgColor += (threshold - 0.5) * 0.15;
+    avgColor += (threshold - 0.5) * u_ditherStrength;
 
     avgColor = clamp(avgColor, 0.0, 1.0);
 
@@ -110,33 +137,7 @@ const FRAGMENT_SHADER_SRC = `
 
 
 const BAYER4_FUNCTION_IMPLEMENTATION = `
-  p = mod(p, 4.0);
 
-  if (p.x < 1.0) {
-    if (p.y < 1.0) return 0.0  / 16.0;
-    if (p.y < 2.0) return 12.0 / 16.0;
-    if (p.y < 3.0) return 3.0  / 16.0;
-    return 15.0 / 16.0;
-  }
-
-  if (p.x < 2.0) {
-    if (p.y < 1.0) return 8.0  / 16.0;
-    if (p.y < 2.0) return 4.0  / 16.0;
-    if (p.y < 3.0) return 11.0 / 16.0;
-    return 7.0  / 16.0;
-  }
-
-  if (p.x < 3.0) {
-    if (p.y < 1.0) return 2.0  / 16.0;
-    if (p.y < 2.0) return 14.0 / 16.0;
-    if (p.y < 3.0) return 1.0  / 16.0;
-    return 13.0 / 16.0;
-  }
-
-  if (p.y < 1.0) return 10.0 / 16.0;
-  if (p.y < 2.0) return 6.0  / 16.0;
-  if (p.y < 3.0) return 9.0  / 16.0;
-  return 5.0  / 16.0;
 `;
 
 function compileShader(gl, type, source) {
@@ -171,26 +172,17 @@ function createPaletteTexture(gl, hexArray) {
   return texture;
 }
 
-export function getWebGLSource({ dithering = true } = {}) {
-  let fragmentShader = FRAGMENT_SHADER_SRC;
-
-  if (dithering) {
-    fragmentShader = fragmentShader.replace(
-      "/**** BAYER4_FUNCTION_IMPLEMENTATION */return 0.5;",
-      BAYER4_FUNCTION_IMPLEMENTATION,
-    );
-  }
-
+export function getWebGLSource() {
   return {
     vertexShader: VERTEX_SHADER_SRC,
-    fragmentShader,
+    fragmentShader: FRAGMENT_SHADER_SRC,
   };
 }
 
 export default function makePixelizer({ 
   initialSqSize = 5,
   palette = [
-    // Ressurect64 on Lospec by Kerrie Lake
+    // Resurrect 64 on Lospec by Kerrie Lake
     "2e222f", "3e3546", "625565", "966c6c", "ab947a", "694f62", "7f708a", "9babb2",
     "c7dcd0", "ffffff", "6e2727", "b33831", "ea4f36", "f57d4a", "ae2334", "e83b3b",
     "fb6b1d", "f79617", "f9c22b", "7a3045", "9e4539", "cd683d", "e6904e", "fbb954",
@@ -246,10 +238,15 @@ export default function makePixelizer({
   const uResolutionLoc = gl.getUniformLocation(program, "u_resolution");
   const uPixelSizeLoc = gl.getUniformLocation(program, "u_pixelSize");
   const uPaletteSizeLoc = gl.getUniformLocation(program, "u_paletteSize");
+  const uDitherStrengthLoc = gl.getUniformLocation(program, "u_ditherStrength");
 
   gl.uniform1i(uImageLoc, 0);
   gl.uniform1i(uPaletteLoc, 1);
   gl.uniform1f(uPaletteSizeLoc, palette.length);
+  gl.uniform1f(
+    uDitherStrengthLoc,
+    dithering ? 0.15 : 0.0
+  );
 
   // Bind palette texture permanently to unit 1
   gl.activeTexture(gl.TEXTURE1);
@@ -270,6 +267,13 @@ export default function makePixelizer({
       gl.uniform1f(
         uPaletteSizeLoc,
         newPalette.length,
+      );
+    },
+    
+    setDitherStrength(strength) {
+      gl.uniform1f(
+        uDitherStrengthLoc,
+        strength
       );
     },
 
@@ -334,7 +338,7 @@ function createPaletteTextureTHREE(THREE, palette) {
 export async function asThreeJS({ 
   initialSqSize = 5,
   palette = [
-    // Ressurect64 on Lospec by Kerrie Lake
+    // Resurrect 64 on Lospec by Kerrie Lake
     "2e222f", "3e3546", "625565", "966c6c", "ab947a", "694f62", "7f708a", "9babb2",
     "c7dcd0", "ffffff", "6e2727", "b33831", "ea4f36", "f57d4a", "ae2334", "e83b3b",
     "fb6b1d", "f79617", "f9c22b", "7a3045", "9e4539", "cd683d", "e6904e", "fbb954",
@@ -382,6 +386,9 @@ export async function asThreeJS({
           u_paletteSize: {
             value: palette.length,
           },
+          u_ditherStrength: {
+            value: dithering ? 0.15 : 0.0,
+          },
         },
       });
 
@@ -420,6 +427,13 @@ export async function asThreeJS({
     setPixelSize(newSize) {
       this.material.uniforms.u_pixelSize.value =
         newSize;
+    }
+    
+    setDitherStrength(strength) {
+      console.log("dither", strength);
+      
+      this.material.uniforms.u_ditherStrength.value =
+        strength;
     }
   }
 

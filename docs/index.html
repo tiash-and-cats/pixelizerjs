@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pixelizer.js</title>
+  </head>
+  <body>
+
+    <canvas id="bg"></canvas>   
+
+    <main>
+
+      <header>
+        <h1><code>pixelizer.js</code></h1>
+        <p>A single-file, palette-based pixelization and dithering library for JavaScript in the browser.</p>
+      </header>
+
+      <section>
+        <p>
+          <code>pixelizer.js</code> renders an image through a configurable color palette, optionally applies Bayer dithering, and produces a retro-inspired result. It can be used as a standalone image processor, integrated into custom WebGL pipelines, or attached as a Three.js post-processing pass.
+        </p>
+      </section>
+
+      <blockquote>
+        <p>Now for the fun part...</p>
+      </blockquote>
+
+      <section x-data="play">
+        <p>
+          The background behind this page is rendered using Three.js with <code>pixelizer.js</code> post processing.
+        </p>
+        <p>
+          This page is not only a landing page, it is a playground! Tinker with the options below and watch the results.
+        </p>
+        
+        <hr>
+        
+        <p>
+          Dithering strength: <input type="range" min="0" max="100" value="15" @input="dither = $event.target.value / 100" /> <span x-text="Math.round(dither * 100) + '%'"></span>
+        </p>
+        
+        <p>
+          Pixel size: <input type="range" min="1" max="20" value="5" @input="pxSize = $event.target.value" /> <span x-text="pxSize + 'x' + pxSize"></span>
+        </p>
+        
+        <form @submit.prevent="loadLospecPalette">
+        <p>
+          Enter the name of a palette on Lospec to use: <input type="text" id="lospec-palette" /> <button type="submit">Load!</button>
+        </p>
+        </form>
+        
+        <p><i>Current palette: <span x-text="palette"></span></i></p>
+        
+        <p>
+          <input type="checkbox" checked x-model="enabled"> <code>pixelizer.js</code> enabled
+        </p>
+        
+        <p x-text="error" style="color: red;"></p>
+      </section>
+      
+      <section>
+        <h2>Wait, where's the docs?</h2>
+        
+        <p>Ah, you're right. The docs aren't exactly GOOD yet, as they are pretty much just the <a href="https://github.com/tiash-and-cats/pixelizerjs/blob/master/README.md">README on GitHub.</a> That does have some useful information, though, so it's worth checking.</p>
+      </section>
+      
+      <blockquote>
+        <p>&copy; tiash-and-cats & contributors 2026+</p>
+      </blockquote>
+    </main>    
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
