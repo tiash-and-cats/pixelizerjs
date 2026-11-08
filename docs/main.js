@@ -9,6 +9,8 @@ import spaceUrl from './assets/space.jpg';
 import laughiconUrl from './assets/laughicon.png';
 import moonUrl from './assets/moon.jpg';
 import normalUrl from './assets/normal.jpg';
+import { html } from './api.md';
+const apiDocsHtml = html;
 
 (async function() {
   const canvas = document.querySelector("#bg");
@@ -52,11 +54,22 @@ import normalUrl from './assets/normal.jpg';
   });
 
   composer.addPass(pixelizer);
+  
+  function resize() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
 
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight, false);
-  camera.position.setZ(30);
-  camera.position.setX(-3);
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+
+    composer.setSize(width, height);
+  }
+
+  window.addEventListener("resize", resize);
+  resize();
 
   renderer.render(scene, camera);
 
@@ -181,8 +194,59 @@ import normalUrl from './assets/normal.jpg';
     get enabled() { return pixelizer.enabled; },
     set enabled(v) { pixelizer.enabled = v; },
     
+    _perfect: false,
+    get perfect() { return this._perfect; },
+    set perfect(v) {
+      this._perfect = v;
+      pixelizer.setPerfectlyAccurateMode(v);
+    },
+    
+    genConf() {
+      return `\
+// Generated using the pixelizer.js playground
+// https://tiash.is-cool.dev/pixelizerjs
+//
+// Change to "await asThreeJS" if using Three.js
+const pixelizer = makePixelizer({
+  initialSqSize: ${JSON.stringify(this.pxSize)},
+  palette: /* ${this.palette} */ ${
+    JSON.stringify(this.paletteArr, null, 2)
+      .split('\n')
+      .map((line, index) => (index === 0 ? line : '  ' + line))
+      .join('\n')
+  },
+  perfectlyAccurate: ${this.perfect},
+});
+
+pixelizer.setDitherStrength(${this.dither});`;
+    },
+    
+    copyConf() {
+      navigator.clipboard.writeText(
+        this.genConf()
+      );
+
+      this.error = "Configuration copied!";
+
+      setTimeout(() => {
+        if (this.error === "Configuration copied!") {
+          this.error = "";
+        }
+      }, 2000);
+    },
+    
     error: "",
     palette: "Resurrect 64 by Kerrie Lake (default)",
+    paletteArr: [
+      "2e222f", "3e3546", "625565", "966c6c", "ab947a", "694f62", "7f708a", "9babb2",
+      "c7dcd0", "ffffff", "6e2727", "b33831", "ea4f36", "f57d4a", "ae2334", "e83b3b",
+      "fb6b1d", "f79617", "f9c22b", "7a3045", "9e4539", "cd683d", "e6904e", "fbb954",
+      "4c3e24", "676633", "a2a947", "d5e04b", "fbff86", "165a4c", "239063", "1ebc73",
+      "91db69", "cddf6c", "313638", "374e4a", "547e64", "92a984", "b2ba90", "0b5e65",
+      "0b8a8f", "0eaf9b", "30e1b9", "8ff8e2", "323353", "484a77", "4d65b4", "4d9be6",
+      "8fd3ff", "45293f", "6b3e75", "905ea9", "a884f3", "eaaded", "753c54", "a24b6f",
+      "cf657f", "ed8099", "831c5d", "c32454", "f04f78", "f68181", "fca790", "fdcbb0"
+    ],
     
     async loadLospecPalette(e) {
       const id = document.getElementById("lospec-palette").value
@@ -203,6 +267,7 @@ import normalUrl from './assets/normal.jpg';
         pixelizer.setPalette(obj.colors);
         
         this.palette = `${obj.name} by ${obj.author || "(Anonymous)"}`
+        this.paletteArr = obj.colors;
         this.error = "";
       } catch (err) {
         // The browser's forced rejection lands here
@@ -215,6 +280,8 @@ import normalUrl from './assets/normal.jpg';
   window.pixelizer = pixelizer;
 
   Alpine.start();
+  
+  document.getElementById("docs").innerHTML = apiDocsHtml;
 
   // Animation Loop
 

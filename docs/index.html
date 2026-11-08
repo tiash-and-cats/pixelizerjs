@@ -13,7 +13,7 @@
     <main>
 
       <header>
-        <h1><code>pixelizer.js</code></h1>
+        <h1 class="fittxt"><code>pixelizer.js</code></h1>
         <p>A single-file, palette-based pixelization and dithering library for JavaScript in the browser.</p>
       </header>
 
@@ -46,25 +46,36 @@
         </p>
         
         <form @submit.prevent="loadLospecPalette">
-        <p>
-          Enter the name of a palette on Lospec to use: <span class="formel"><input type="text" id="lospec-palette" /> <button type="submit">Load!</button></span>
-        </p>
+          <p>
+            Enter the name of a palette on Lospec to use: <span class="formel"><input type="text" id="lospec-palette" placeholder="Lospec 2000" /> <button type="submit">Load!</button></span>
+          </p>
         </form>
         
         <p><i>Current palette: <span x-text="palette"></span></i></p>
+        
+        <p>
+          <input type="checkbox" x-model="perfect"> Perfectly accurate <br>
+          <i>This style was the style used by previous versions. It is slower and looks a bit less retro with some slight anti-aliasing, but nice in it's own way. This is both a performance decision and a stylistic choice. Have fun!</i>
+        </p>
+        
+        <hr>
         
         <p>
           <input type="checkbox" checked x-model="enabled"> <code>pixelizer.js</code> enabled
         </p>
         
         <p x-text="error" style="color: red;"></p>
+        
+        <details>
+          <summary>Generated code</summary>
+          <p>
+            <button class="formel" @click="copyConf()">Copy</button>
+          </p>
+          <p><pre x-text="genConf()" class="fittxt"></pre></p>
+        </details>
       </section>
       
-      <section>
-        <h2>Wait, where's the docs?</h2>
-        
-        <p>Ah, you're right. The docs aren't exactly GOOD yet, as they are pretty much just the <a href="https://github.com/tiash-and-cats/pixelizerjs/blob/master/README.md">README on GitHub</a>. That does have some useful information, though, so it's worth checking.</p>
-      </section>
+      <section id="docs"></section>
       
       <footer>
         <p>&copy; tiash-and-cats & contributors 2026+</p>

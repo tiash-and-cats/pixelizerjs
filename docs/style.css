@@ -1,4 +1,20 @@
-@import url("https://use.typekit.net/jmk3xov.css");
+* { box-sizing: border-box; }
+
+@font-face {
+  font-family: 'Untitled';
+  src: url('https://tiash.is-cool.dev/untitled/UntitledRegular.ttf')
+       format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Untitled';
+  src: url('https://tiash.is-cool.dev/untitled/UntitledBold.ttf')
+       format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
 
 canvas {
   position: fixed;
@@ -6,16 +22,16 @@ canvas {
   left: 0;
 }
 
-
 :root {
   --dark-bg: rgba(15, 15, 15, 0.95);
   --spacing: 350px;
 
-  font-family: brandon-grotesque, sans-serif;
+  font-family: sans-serif;
   font-weight: 400;
   font-style: normal;
+  
+  overflow-x: clip;
 }
-
 
 main {
   width: 100vw;
@@ -31,15 +47,9 @@ main {
 }
 
 h1, h2, h3, blockquote {
-  font-family: elevon, sans-serif;
+  font-family: Untitled, sans-serif;
   font-weight: 700;
   font-style: normal;
-}
-
-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
 }
 
 header {
@@ -88,4 +98,24 @@ blockquote p {
 
 .formel {
   float: right;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  border: 1px solid #fff3;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #fff3;
+}
+
+.fittxt {
+  text-fit: shrink;
 }
