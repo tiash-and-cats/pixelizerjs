@@ -256,89 +256,34 @@ const {
 } = getWebGLSource();
 ```
 
-
-
 # Options
 
 The following options are accepted by both `makePixelizer()` and `asThreeJS()`.
 
+| Option | Default | Description |
+|----------|----------|-------------|
+| `initialSqSize` | `5` | Controls the width and height of each generated pixel block. |
+| `palette` | Resurrect 64 by Kerrie Lake | Determines which colors Pixelizer may use when producing output. |
+| `dithering` | `true` | Determines whether Bayer dithering is enabled when the Pixelizer instance is created. |
+| `perfectlyAccurate` | `false` | Controls how colors are selected for each pixel block. When disabled, Pixelizer uses a fast representative sample from the block, which is significantly faster and often produces a slightly more retro appearance. When enabled, Pixelizer computes the exact average color of every pixel within a block, which is slower, can produce subtle anti-aliasing, and may look smoother at small pixel sizes. |
 
-
-## `initialSqSize`
-
-Changes the initial pixel size. This option controls the width and height of each generated pixel block.
-
-| Property | Value |
-|-----------|--------|
-| Type | Number |
-| Default | `5` |
-
-### Example
+## Example
 
 ```js
 {
-  initialSqSize: 10
-}
-```
-
-
-
-## `palette`
-
-Changes the initial palette. This option determines which colors Pixelizer may use when producing output.
-
-| Property | Value |
-|-----------|--------|
-| Type | Array of hexadecimal color strings |
-| Default | Resurrect 64 by Kerrie Lake |
-
-### Example
-
-```js
-{
+  initialSqSize: 10,
+  dithering: true,
+  perfectlyAccurate: false,
   palette: [
+    // (h3Rry F!z by ID Rando on Lospec
     "0d0a19",
     "ed2443",
     "58b6ef",
     "f3ecdd",
-  ]
+  ],
 }
 ```
 
+# See also...
 
-
-## `dithering`
-
-Changes the initial dithering state. This option determines whether Bayer dithering is enabled when the Pixelizer instance is created.
-
-| Property | Value |
-|-----------|--------|
-| Type | Boolean |
-| Default | `true` |
-
-### Example
-
-```js
-{
-  dithering: false
-}
-```
-
-
-
-## `perfectlyAccurate`
-
-Changes the averaging mode. This option controls how colors are selected for each pixel block. When disabled, `pixelizer.js` uses a fast representative sample from the block, which is significantly faster and often produces a slightly more retro appearance. When enabled, `pixelizer.js` computes the exact average color of every pixel within a block, which is slower, can produce subtle anti-aliasing, and may look smoother at small pixel sizes.
-
-| Property | Value |
-|-----------|--------|
-| Type | Boolean |
-| Default | `false` |
-
-### Example
-
-```js
-{
-  perfectlyAccurate: true
-}
-```
+- [... the README on GitHub](https://github.com/tiash-and-cats/pixelizerjs/blob/master/README.md)

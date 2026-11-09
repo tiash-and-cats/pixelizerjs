@@ -3,14 +3,16 @@ import * as THREE from "three";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { asThreeJS } from "./pixelizer.js";
-import Alpine from 'alpinejs'
+import Alpine from 'alpinejs';
+import AnchorJS from 'anchor-js';
+
+THREE.ColorManagement.enabled = false;
 
 import spaceUrl from './assets/space.jpg';
 import laughiconUrl from './assets/laughicon.png';
 import moonUrl from './assets/moon.jpg';
 import normalUrl from './assets/normal.jpg';
-import { html } from './api.md';
-const apiDocsHtml = html;
+import apiDocsHtml from './api.md';
 
 (async function() {
   const canvas = document.querySelector("#bg");
@@ -19,6 +21,8 @@ const apiDocsHtml = html;
     canvas,
     antialias: true,
   });
+  
+  const textureLdr = new THREE.TextureLoader();
 
   renderer.setSize(
     window.innerWidth,
@@ -85,8 +89,13 @@ const apiDocsHtml = html;
 
   const pointLight = new THREE.PointLight(0xffffff);
   pointLight.position.set(5, 5, 5);
+  pointLight.intensity = Math.PI;
+  pointLight.decay = 0;
 
   const ambientLight = new THREE.AmbientLight(0xffffff);
+  ambientLight.intensity = Math.PI;
+  ambientLight.decay = 0;
+  
   scene.add(pointLight, ambientLight);
 
   // Helpers
@@ -114,12 +123,12 @@ const apiDocsHtml = html;
 
   // Background
 
-  const spaceTexture = new THREE.TextureLoader().load(spaceUrl);
+  const spaceTexture = textureLdr.load(spaceUrl);
   scene.background = spaceTexture;
 
   // Avatar
 
-  const laughTexture = new THREE.TextureLoader().load(laughiconUrl);
+  const laughTexture = textureLdr.load(laughiconUrl);
 
   const laugh = new THREE.Mesh(new THREE.BoxGeometry(3, 3, 3), new THREE.MeshBasicMaterial({ map: laughTexture }));
 
@@ -127,8 +136,8 @@ const apiDocsHtml = html;
 
   // Moon
 
-  const moonTexture = new THREE.TextureLoader().load(moonUrl);
-  const normalTexture = new THREE.TextureLoader().load(normalUrl);
+  const moonTexture = textureLdr.load(moonUrl);
+  const normalTexture = textureLdr.load(normalUrl);
 
   const moon = new THREE.Mesh(
     new THREE.SphereGeometry(3, 32, 32),
@@ -157,9 +166,9 @@ const apiDocsHtml = html;
       document.documentElement.offsetHeight
     )) * 8000;
     
-    moon.rotation.x += 0.05;
-    moon.rotation.y += 0.075;
-    moon.rotation.z += 0.05;
+    moon.rotation.x += 0.025;
+    moon.rotation.y += 0.0375;
+    moon.rotation.z += 0.025;
 
     laugh.rotation.y += 0.01;
     laugh.rotation.z += 0.01;
@@ -277,11 +286,14 @@ pixelizer.setDitherStrength(${this.dither});`;
     }
   }));
 
-  window.pixelizer = pixelizer;
-
-  Alpine.start();
+  window._pixelizer = pixelizer;
   
   document.getElementById("docs").innerHTML = apiDocsHtml;
+  Alpine.start();
+  
+  const anchors = new AnchorJS();
+  anchors.options["class"] = "anchor";
+  anchors.add("#docs h1, #docs h2, #docs h3, #docs h4, #docs h5, #docs h6");
 
   // Animation Loop
 
