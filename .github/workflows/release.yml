@@ -34,7 +34,6 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - name: Validate package version
-        working-directory: pkg
         run: |
           REVISION="${GITHUB_REF_NAME#r}"
           EXPECTED="1.${REVISION}.0"
