@@ -16,7 +16,13 @@ A single-file, palette-based pixelization and dithering library for JavaScript i
 
 ## Installation
 
-Just copy `pixelizer.js` into your project! I promise there'll be a better way to do this soon.
+Just copy `pixelizer.js` into your project or install using:
+
+``` bash
+npm install pixelizerjs
+```
+
+In that case, you will need to import `"pixelizerjs"` instead of `"./pixelizer.js"`. The following examples use the latter.
 
 ## Examples
 
@@ -129,7 +135,7 @@ composer.addPass(
 > YOU ARE ENTERING A VERY TECHNICAL AREA. IF YOU DO NOT UNDERSTAND, STAY CALM AND SCROLL PAST.
 
 ``` js
-import { getWebGLSource } from "pixelizer";
+import { getWebGLSource } from "./pixelizer.js";
 
 const {
   vertexShader,

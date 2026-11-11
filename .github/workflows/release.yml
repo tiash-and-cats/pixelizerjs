@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "r*"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate tag format
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          
+          if ! [[ "$TAG" =~ ^r[0-9]+$ ]]; then
+            echo "Invalid tag: $TAG"
+            echo "Expected r<num> such as r0, r1, or r42."
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      - name: Validate package version
+        working-directory: pkg
+        run: |
+          REVISION="${GITHUB_REF_NAME#r}"
+          EXPECTED="1.${REVISION}.0"
+          
+          ACTUAL=$(node -p "JSON.parse(require('fs').readFileSync('package.json')).version")
+          
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "Expected package version $EXPECTED"
+            echo "Found package version $ACTUAL"
+            exit 1
+          fi
+
+      - name: Publish package
+        run: npm publish --provenance --access public

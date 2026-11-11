@@ -1,0 +1,36 @@
+{
+  "name": "pixelizerjs",
+  "version": "1.1.0",
+  "description": "A single-file, palette-based pixelization and dithering library for JavaScript in the browser.",
+  "keywords": [
+    "pixel-art",
+    "pixelization",
+    "dithering",
+    "webgl",
+    "threejs",
+    "p5js",
+    "retro",
+    "shader"
+  ],
+  "homepage": "https://tiash.is-cool.dev/pixelizerjs",
+  "bugs": {
+    "url": "https://github.com/tiash-and-cats/pixelizerjs/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tiash-and-cats/pixelizerjs.git"
+  },
+  "license": "MIT",
+  "author": "tiash-and-cats",
+  "type": "module",
+  "main": "./pixelizer.js",
+  "exports": "./pixelizer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "pixelizer.js",
+    "README.md",
+    "LICENSE"
+  ]
+}
