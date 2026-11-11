@@ -32,4 +32,4 @@ new p5((p) => {
     // p.image(fbo, -300, -200);
     px.render(fbo);
   };
-});
+}, "canvas");

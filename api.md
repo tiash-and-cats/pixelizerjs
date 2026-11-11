@@ -161,6 +161,10 @@ Renders a p5.js source buffer using Pixelizer.
 px.render(fbo);
 ```
 
+#### See also...
+
+- [...a semi-interactive example](https://tiash.is-cool.dev/pixelizerjs/p5demo)
+
 ---
 
 ### `getWebGLSource()`
