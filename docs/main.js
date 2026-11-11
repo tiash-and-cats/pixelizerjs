@@ -6,6 +6,7 @@ import { asThreeJS } from "./pixelizer.js";
 import Alpine from 'alpinejs';
 import AnchorJS from 'anchor-js';
 
+// not the best practice, but oh well ;)
 THREE.ColorManagement.enabled = false;
 
 import spaceUrl from './assets/space.jpg';

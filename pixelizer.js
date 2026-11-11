@@ -26,6 +26,18 @@ const THREE_VERTEX_SHADER_SRC = `
   }
 `;
 
+const P5_VERTEX_SHADER_SRC = `
+  attribute vec3 aPosition;
+  attribute vec2 aTexCoord;
+
+  varying vec2 v_texCoord;
+
+  void main() {
+    v_texCoord = aTexCoord;
+    gl_Position = vec4(aPosition, 1.0);
+  }
+`;
+
 const FRAGMENT_SHADER_SRC = `
   precision highp float;
 
@@ -228,7 +240,7 @@ function resolveOptions({
     perfectlyAccurate,
 
     ditherStrength:
-      dithering ? 0.15 : 0.0,
+      typeof dithering == "number" ? dithering : dithering ? 0.15 : 0.0,
 
     perfectlyAccurateMode:
       perfectlyAccurate ? 1.0 : 0.0,
@@ -638,4 +650,89 @@ export async function asThreeJS(options = {}) {
   }
 
   return new PixelizerPass();
+}
+
+function createPaletteTextureP5(p, palette) {
+  const paletteImg = p.createImage(palette.length, 1);
+  paletteImg.loadPixels();
+
+  palette.forEach((hex, i) => {
+    const num = parseInt(hex.replace("#", ""), 16);
+
+    paletteImg.pixels[i * 4 + 0] = (num >> 16) & 255;
+    paletteImg.pixels[i * 4 + 1] = (num >> 8) & 255;
+    paletteImg.pixels[i * 4 + 2] = num & 255;
+    paletteImg.pixels[i * 4 + 3] = 255;
+  });
+
+  paletteImg.updatePixels();
+
+  if (p._renderer) {
+    const tex = p._renderer.getTexture(paletteImg);
+    tex.setInterpolation(p.NEAREST, p.NEAREST);
+  }
+
+  return paletteImg;
+}
+
+export function asP5(p, options = {}) {  
+  if (!p._renderer) {
+    throw new Error("You seem to have called asP5 before p.setup! This does not work...");
+  }
+
+  const opts = resolveOptions(options);
+  const shader = p.createShader(P5_VERTEX_SHADER_SRC, opts.fragmentShader);
+
+  let paletteTex = createPaletteTextureP5(p, opts.palette);
+  let paletteSize = opts.palette.length;
+  let pixelSize = opts.initialSqSize;
+  let ditherStrength = opts.ditherStrength;
+  let perfectlyAccurateMode = opts.perfectlyAccurateMode;
+
+  return {
+    shader,
+
+    setPalette(newPalette) {
+      if (paletteTex) {
+        const oldTex = p._renderer.textures.get(paletteTex);
+        if (oldTex) oldTex.dispose();
+      }
+      paletteTex = createPaletteTextureP5(p, newPalette);
+      paletteSize = newPalette.length;
+    },
+
+    setPixelSize(newSize) {
+      pixelSize = newSize;
+    },
+
+    setDitherStrength(strength) {
+      ditherStrength = strength;
+    },
+
+    setPerfectlyAccurateMode(enabled) {
+      perfectlyAccurateMode = enabled ? 1.0 : 0.0;
+    },
+
+    // sourceBuffer is p5.Graphics, p5.Image, or p5.Framebuffer
+    render(sourceBuffer) {
+      const d = sourceBuffer.pixelDensity ? sourceBuffer.pixelDensity() : 1;
+
+      p.clear();
+      p.shader(shader);
+      shader.setUniform('u_image', sourceBuffer);
+      shader.setUniform('u_palette', paletteTex);
+      shader.setUniform('u_resolution', [
+        sourceBuffer.width * d,
+        sourceBuffer.height * d
+      ]);
+      shader.setUniform('u_pixelSize', pixelSize);
+      shader.setUniform('u_paletteSize', paletteSize);
+      shader.setUniform('u_ditherStrength', ditherStrength);
+      shader.setUniform('u_perfectlyAccurateMode', perfectlyAccurateMode);
+
+      p.noStroke();
+      p.quad(-1, -1, 1, -1, 1, 1, -1, 1);
+      p.resetShader();
+    }
+  };
 }
