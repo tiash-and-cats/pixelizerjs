@@ -27,7 +27,7 @@ jobs:
 
       - name: Build Vite
         working-directory: docs
-        run: npm run build --outDir ../_site
+        run: npx vite build --outDir ../_site
 
       - name: Copy p5 demo
         run: cp -r p5jsdemo _site/p5demo
