@@ -30,7 +30,10 @@ jobs:
         run: npx vite build --outDir ../_site
 
       - name: Copy p5 demo
-        run: cp -r p5jsdemo _site/p5demo
+        run: |
+          cp -r p5jsdemo _site/p5demo
+          rm _site/p5demo/pixelizer.js
+          cp pixelizer.js _site/p5demo/pixelizer.js
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
