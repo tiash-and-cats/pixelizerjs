@@ -215,10 +215,7 @@ import apiDocsHtml from './api.md';
       return `\
 // Generated using the pixelizer.js playground
 // https://tiash.is-cool.dev/pixelizerjs
-//
-// Change to "await asThreeJS" if using Three.js
-//     or to "asP5" if using p5.js
-const pixelizer = makePixelizer({
+{
   initialSqSize: ${JSON.stringify(this.pxSize)},
   palette: /* ${this.palette} */ ${
     JSON.stringify(this.paletteArr, null, 2)
@@ -228,7 +225,7 @@ const pixelizer = makePixelizer({
   },
   perfectlyAccurate: ${this.perfect},
   dithering: ${this.dither},
-});`;
+}`;
     },
     
     copyConf() {

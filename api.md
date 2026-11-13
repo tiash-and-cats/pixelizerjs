@@ -167,6 +167,53 @@ px.render(fbo);
 
 ---
 
+### `async asBabylon(engine, camera, scene, options?)`
+
+Creates a Babylon.js post-processing pass. This function returns an asynchronous wrapper object containing the active Babylon `PostProcess` instance along with configuration methods that accept the same options as `makePixelizer()`.
+
+#### Parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `engine` | `BABYLON.Engine` | The current Babylon engine instance. |
+| `camera` | `BABYLON.Camera` | The camera to attach the post-processing pass to. |
+| `scene` | `BABYLON.Scene` | The active Babylon scene. |
+| `options` | Object | Configuration options. See the Options section below. |
+
+#### Returns
+
+| Type | Description |
+| --- | --- |
+| Object | An object containing the `PostProcess` instance as `postProcess`, and configuration methods. |
+
+#### Example
+
+```js
+import * as BABYLON from "@babylonjs/core";
+import { asBabylon } from "./pixelizer.js";
+
+const engine = new BABYLON.Engine(canvas, true);
+const scene = new BABYLON.Scene(engine);
+const camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 5, -10), scene);
+
+// Initialize the pixelizer post-process asynchronously
+const pixelizerPass = await asBabylon(
+  engine,
+  camera,
+  scene,
+  {
+    initialSqSize: 5,
+    dithering: true,
+  }
+);
+```
+
+#### See also...
+
+- [...a semi-interactive example](https://tiash.is-cool.dev/pixelizerjs/demos/babylon)
+
+---
+
 ### `getWebGLSource()`
 
 Returns the shader sources used internally by Pixelizer. This function is exported for advanced use cases involving custom WebGL integrations.
@@ -308,7 +355,7 @@ The following options are accepted by `makePixelizer()`, `asThreeJS()`, and `asP
 |----------|----------|-------------|
 | `initialSqSize` | `5` | Controls the width and height of each generated pixel block. |
 | `palette` | Resurrect 64 by Kerrie Lake | Determines which colors Pixelizer may use when producing output. |
-| `dithering` | `true` | Enables Bayer dithering. May also be a number specifying an explicit dithering strength. |
+| `dithering` | `true` | Enables Bayer dithering. May also be a number specifying an explicit dithering strength. (If `true`, the strength is `0.15`.) |
 | `perfectlyAccurate` | `false` | Controls how colors are selected for each pixel block. When disabled, Pixelizer uses a fast representative sample from the block, which is significantly faster and often produces a slightly more retro appearance. When enabled, Pixelizer computes the exact average color of every pixel within a block, which is slower, can produce subtle anti-aliasing, and may look smoother at small pixel sizes. |
 
 ### Example

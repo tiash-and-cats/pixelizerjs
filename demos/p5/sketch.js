@@ -10,6 +10,10 @@ new p5((p) => {
 
     fbo = p.createFramebuffer();
     px = asP5(p);
+    
+    window.px = px;
+    
+    console.log("Hello, hacker! Check out `window.px`.");
   };
 
   p.draw = () => {

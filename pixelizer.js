@@ -719,6 +719,31 @@ function createPaletteTextureP5(p, palette) {
   return paletteImg;
 }
 
+function disposeImageTexture(p, img) {
+  if (!img) return;
+
+  if (p._renderer && p._renderer.getTexture) {
+    const tex = p._renderer.getTexture(img);
+    if (tex && tex.glTex) {
+      p._renderer.GL.deleteTexture(tex.glTex);
+    }
+    // Remove the cached entry from p5's internal texture list
+    if (Array.isArray(p._renderer.textures)) {
+      p._renderer.textures = p._renderer.textures.filter(
+        (t) => t.src !== img
+      );
+    }
+  }
+
+  img.width = 0;
+  img.height = 0;
+  if (img.canvas) {
+    img.canvas.width = 0;
+    img.canvas.height = 0;
+  }
+  img.pixels = [];
+}
+
 export function asP5(p, options = {}) {  
   if (!p._renderer) {
     throw new Error("You seem to have called asP5 before p.createCanvas! This does not work...");
@@ -739,8 +764,7 @@ export function asP5(p, options = {}) {
 
     setPalette(newPalette) {
       if (paletteTex) {
-        const oldTex = p._renderer.textures.get(paletteTex);
-        if (oldTex) oldTex.dispose();
+        disposeImageTexture(p, paletteTex);
       }
       paletteTex = createPaletteTextureP5(p, newPalette);
       paletteSize = newPalette.length;
@@ -784,16 +808,120 @@ export function asP5(p, options = {}) {
       if (disposed) return;
       disposed = true;
       
-      if (paletteTex) {
-        const tex =
-          p._renderer.textures.get(
-            paletteTex
-          );
-
-        if (tex) tex.dispose();
-      }
+      disposeImageTexture(paletteTex);
     },
     
     [Symbol.dispose]() { this.dispose(); }
+  };
+}
+
+function createPaletteTextureBabylon(BABYLON, scene, palette) {
+  const data = new Uint8Array(palette.length * 4);
+
+  palette.forEach((hex, i) => {
+    const num = parseInt(hex.replace("#", ""), 16);
+    data[i * 4 + 0] = (num >> 16) & 255;
+    data[i * 4 + 1] = (num >> 8) & 255;
+    data[i * 4 + 2] = num & 255;
+    data[i * 4 + 3] = 255;
+  });
+
+  return BABYLON.RawTexture.CreateRGBTexture(
+    data,
+    palette.length,
+    1,
+    scene,
+    false,
+    false,
+    BABYLON.Texture.NEAREST_SAMPLINGMODE
+  );
+}
+
+export async function asBabylon(engine, camera, scene, options = {}) {
+  const opts = resolveOptions(options);
+  const BABYLON = await import("@babylonjs/core");
+
+  const modifiedFragmentShader = `
+    #define u_image textureSampler
+    #define v_texCoord vUV
+    ${opts.fragmentShader}
+  `;
+
+  const shaderName = "pixelizerShader_" + Math.random().toString(36).substring(7);
+  BABYLON.Effect.ShadersStore[shaderName + "PixelShader"] = modifiedFragmentShader;
+
+  let paletteTex = createPaletteTextureBabylon(BABYLON, scene, opts.palette);
+  let pixelSize = opts.initialSqSize;
+  let ditherStrength = opts.ditherStrength;
+  let perfectlyAccurateMode = opts.perfectlyAccurateMode;
+  let disposed = false;
+
+  // Notice: no custom vertex shader passed; Babylon handles it automatically
+  const postProcess = new BABYLON.PostProcess(
+    "Pixelizer",
+    shaderName,
+    [
+      "u_resolution",
+      "u_pixelSize",
+      "u_paletteSize",
+      "u_ditherStrength",
+      "u_perfectlyAccurateMode"
+    ],
+    ["u_palette"],
+    1.0,
+    camera,
+    BABYLON.Texture.NEAREST_SAMPLINGMODE,
+    scene.getEngine(),
+    false
+  );
+
+  postProcess.onApply = (effect) => {
+    const renderWidth = engine.getRenderWidth();
+    const renderHeight = engine.getRenderHeight();
+
+    effect.setVector2("u_resolution", new BABYLON.Vector2(renderWidth, renderHeight));
+    effect.setFloat("u_pixelSize", pixelSize);
+    effect.setFloat("u_paletteSize", opts.palette.length);
+    effect.setFloat("u_ditherStrength", ditherStrength);
+    effect.setFloat("u_perfectlyAccurateMode", perfectlyAccurateMode);
+    effect.setTexture("u_palette", paletteTex);
+  };
+
+  return {
+    postProcess,
+
+    setPixelSize(newSize) {
+      pixelSize = newSize;
+    },
+
+    setPalette(newPalette) {
+      if (paletteTex) {
+        paletteTex.dispose();
+      }
+      opts.palette = newPalette;
+      paletteTex = createPaletteTextureBabylon(BABYLON, scene, newPalette);
+    },
+
+    setDitherStrength(strength) {
+      ditherStrength = strength;
+    },
+
+    setPerfectlyAccurateMode(enabled) {
+      perfectlyAccurateMode = enabled ? 1.0 : 0.0;
+    },
+
+    dispose() {
+      if (disposed) return;
+      disposed = true;
+
+      if (paletteTex) {
+        paletteTex.dispose();
+      }
+      postProcess.dispose();
+    },
+
+    [Symbol.dispose]() {
+      this.dispose();
+    }
   };
 }

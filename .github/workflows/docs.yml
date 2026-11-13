@@ -29,7 +29,7 @@ jobs:
         working-directory: docs
         run: npx vite build --outDir ../_site
 
-      - name: Copy p5 demo
+      - name: Copy demos
         run: cp -rL demos _site/demos
 
       - name: Upload artifact
