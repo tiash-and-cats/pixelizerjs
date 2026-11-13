@@ -1,4 +1,4 @@
-name: Release
+name: npm - upload package
 
 on:
   push:
@@ -12,6 +12,8 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment:
+      name: npm-package 
 
     steps:
       - name: Validate tag format
@@ -30,8 +32,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24
-          registry-url: https://registry.npmjs.org
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false  # never use caching in release builds
 
       - name: Validate package version
         run: |
