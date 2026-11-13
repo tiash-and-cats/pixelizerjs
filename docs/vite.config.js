@@ -3,6 +3,11 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   base: '/pixelizerjs/',
+  build: {
+    rolldownOptions: {
+      external: [/^@babylonjs\//]
+    }
+  },
   resolve: {
     preserveSymlinks: true,
   },
