@@ -163,13 +163,13 @@ px.render(fbo);
 
 #### See also...
 
-- [...a semi-interactive example](https://tiash.is-cool.dev/pixelizerjs/p5demo)
+- [...a semi-interactive example](https://tiash.is-cool.dev/pixelizerjs/demos/p5)
 
 ---
 
 ### `getWebGLSource()`
 
-Returns the shader sources used internally by Pixelizer. This function is intended for advanced use cases involving custom WebGL integrations.
+Returns the shader sources used internally by Pixelizer. This function is exported for advanced use cases involving custom WebGL integrations.
 
 #### Parameters
 

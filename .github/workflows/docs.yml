@@ -30,7 +30,7 @@ jobs:
         run: npx vite build --outDir ../_site
 
       - name: Copy p5 demo
-        run: cp -rL p5jsdemo _site/p5demo
+        run: cp -rL demos _site/demos
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
