@@ -383,4 +383,4 @@ The following options are accepted by `makePixelizer()`, `asThreeJS()`, and `asP
 
 ## See also...
 
-- [README on GitHub](https://github.com/tiash-and-cats/pixelizerjs/blob/master/README.md)
+- [...the README on GitHub](https://github.com/tiash-and-cats/pixelizerjs/blob/master/README.md)
