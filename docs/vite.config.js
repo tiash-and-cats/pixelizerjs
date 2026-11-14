@@ -1,12 +1,21 @@
 import { parse } from 'marked';
 import { defineConfig } from 'vite'
+import pkg from './package.json' with { type: 'json' };
+
+const IDC_ABOUT_THESE_MODULES = ["@babylonjs/core"];
 
 export default defineConfig({
   base: '/pixelizerjs/',
+  optimizeDeps: {
+    exclude: IDC_ABOUT_THESE_MODULES,
+    rolldownOptions: {
+      external: IDC_ABOUT_THESE_MODULES,
+    },
+  },
   build: {
     rolldownOptions: {
-      external: [/^@babylonjs\//]
-    }
+      external: IDC_ABOUT_THESE_MODULES,
+    },
   },
   resolve: {
     preserveSymlinks: true,
@@ -39,6 +48,15 @@ export default defineConfig({
             `,
             map: null,
           };
+        }
+      },
+    },
+    {
+      name: 'ignore-optional-babylon',
+      apply: 'serve', // Only runs during `vite dev`, leaving `vite build` untouched
+      resolveId(id) {
+        if (IDC_ABOUT_THESE_MODULES.includes(id)) {
+          return { id, external: true };
         }
       },
     },

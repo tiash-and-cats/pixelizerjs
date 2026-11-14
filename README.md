@@ -2,7 +2,7 @@
 
 A single-file, palette-based pixelization and dithering library for JavaScript in the browser.
 
-`pixelizer.js` renders an image through a configurable color palette, optionally applies Bayer dithering, and produces a retro-inspired result. It can be used as a standalone image processor, integrated into custom WebGL pipelines, or attached as a Three.js post-processing pass.
+`pixelizer.js` renders an image through a configurable color palette, optionally applies Bayer dithering, and produces a retro-inspired result. It can be used as a standalone image processor, integrated into custom WebGL pipelines, or attached as a post-processing effect in Three.js, Babylon.js, and p5.js.
 
 ## Features
 

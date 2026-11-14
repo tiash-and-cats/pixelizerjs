@@ -129,7 +129,18 @@ import apiDocsHtml from './api.md';
 
   // Avatar
 
-  const laughTexture = textureLdr.load(laughiconUrl);
+  const laughTexture = textureLdr.load(laughiconUrl, (tex) => {
+    // Disable magnification interpolation (upscaling)
+    tex.magFilter = THREE.NearestFilter;
+
+    // Disable minification interpolation (downscaling)
+    tex.minFilter = THREE.NearestFilter;
+
+    // Optional: If you don't need mipmaps, you can also disable them
+    tex.generateMipmaps = false;
+
+    tex.needsUpdate = true;
+  });
 
   const laugh = new THREE.Mesh(new THREE.BoxGeometry(3, 3, 3), new THREE.MeshBasicMaterial({ map: laughTexture }));
 
@@ -243,7 +254,7 @@ import apiDocsHtml from './api.md';
     },
     
     error: "",
-    palette: "Resurrect 64 by Kerrie Lake (default)",
+    palette: "Resurrect 64 by Kerrie Lake on Lospec (default)",
     paletteArr: [
       "2e222f", "3e3546", "625565", "966c6c", "ab947a", "694f62", "7f708a", "9babb2",
       "c7dcd0", "ffffff", "6e2727", "b33831", "ea4f36", "f57d4a", "ae2334", "e83b3b",
@@ -273,15 +284,30 @@ import apiDocsHtml from './api.md';
         const obj = await res.json();
         pixelizer.setPalette(obj.colors);
         
-        this.palette = `${obj.name} by ${obj.author || "(Anonymous)"}`
+        this.palette = `${obj.name} by ${obj.author || "(Anonymous)"} on Lospec`;
         this.paletteArr = obj.colors;
         this.error = "";
       } catch (err) {
-        // The browser's forced rejection lands here
         this.error = `Palette "${id}" not found or request blocked (CORS/Network error).`;
         console.error("Fetch threw an error:", err);
       }
-    }
+    },
+    
+    loadJSONPalette(e) {
+      const json = document.getElementById("json-palette").value;
+      
+      try {
+        const palette = JSON.parse(json);
+        pixelizer.setPalette(palette);
+        
+        this.palette = "whatever ;)";
+        this.paletteArr = palette;
+      
+        this.error = "";
+      } catch (err) {
+        this.error = err;
+      }
+    },
   }));
 
   window._pixelizer = pixelizer;

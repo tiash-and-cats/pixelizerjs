@@ -19,7 +19,7 @@
 
       <section>
         <p>
-          <code>pixelizer.js</code> renders an image through a configurable color palette, optionally applies Bayer dithering, and produces a retro-inspired result. It can be used as a standalone image processor, integrated into custom WebGL pipelines, or attached as a Three.js post-processing pass.
+          <code>pixelizer.js</code> renders an image through a configurable color palette, optionally applies Bayer dithering, and produces a retro-inspired result. It can be used as a standalone image processor, integrated into custom WebGL pipelines, or attached as a post-processing effect in Three.js, Babylon.js, and p5.js.
         </p>
       </section>
 
@@ -42,12 +42,18 @@
         </p>
         
         <p>
-          Pixel size: <span class="formel"><span x-text="pxSize + 'x' + pxSize"></span> <input type="range" min="1" max="20" value="5" @input="pxSize = $event.target.value" /></span>
+          Pixel size: <span class="formel"><span x-text="pxSize + 'x' + pxSize"></span> <input type="range" min="1" max="20" value="5" x-model="pxSize" /></span>
         </p>
         
         <form @submit.prevent="loadLospecPalette">
           <p>
             Enter the name of a palette on Lospec to use: <span class="formel"><input type="text" id="lospec-palette" placeholder="Lospec 2000" /> <button type="submit">Load!</button></span>
+          </p>
+        </form>
+
+        <form @submit.prevent="loadJSONPalette">
+          <p>
+            Or enter a palette in the form of a JSON array: <span class="formel"><input type="text" id="json-palette" placeholder='["#0f380f", "#306230", "#8bac0f", "#9bbc0f"]'></textarea> <button type="submit" height="100%">Load!</button></span>
           </p>
         </form>
         

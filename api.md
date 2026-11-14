@@ -30,6 +30,33 @@ import makePixelizer from "./pixelizer.js";
 const pixelizer = makePixelizer();
 ```
 
+#### Methods
+
+`makePixelizer` supports the shared configuration methods described in the [Common Methods](#common-methods) section. It has one unique method:
+
+##### `pixelizer.pixelize(imageBitmap)`
+
+Processes an image. This method applies pixelization, palette quantization, and dithering to an image and returns a new `ImageBitmap` containing the result.
+
+###### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `imageBitmap` | ImageBitmap | The image to process. |
+
+###### Returns
+
+| Type | Description |
+|------|-------------|
+| ImageBitmap | The processed image. |
+
+###### Example
+
+```js
+const output =
+  pixelizer.pixelize(inputBitmap);
+```
+
 ---
 
 ### `async asThreeJS(options?)`
@@ -323,30 +350,6 @@ pixelizer.setPerfectlyAccurateMode(true);
 ```
 
 
-
-### `pixelizer.pixelize(imageBitmap)`
-
-Processes an image. This method applies pixelization, palette quantization, and dithering to an image and returns a new `ImageBitmap` containing the result.
-
-#### Parameters
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `imageBitmap` | ImageBitmap | The image to process. |
-
-#### Returns
-
-| Type | Description |
-|------|-------------|
-| ImageBitmap | The processed image. |
-
-#### Example
-
-```js
-const output =
-  pixelizer.pixelize(inputBitmap);
-```
-
 ## Common Options
 
 The following options are accepted by `makePixelizer()`, `asThreeJS()`, and `asP5()`.
@@ -369,7 +372,7 @@ The following options are accepted by `makePixelizer()`, `asThreeJS()`, and `asP
   perfectlyAccurate: false,
 
   palette: [
-    // h3Rry F!z by ID Rando on Lospec
+    // (h3Rry F!z by ID Rando on Lospec
     "0d0a19",
     "ed2443",
     "58b6ef",
