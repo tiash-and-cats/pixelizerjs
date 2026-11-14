@@ -5,7 +5,6 @@ import pkg from './package.json' with { type: 'json' };
 const IDC_ABOUT_THESE_MODULES = ["@babylonjs/core"];
 
 export default defineConfig({
-  base: '/pixelizerjs/',
   optimizeDeps: {
     exclude: IDC_ABOUT_THESE_MODULES,
     rolldownOptions: {
